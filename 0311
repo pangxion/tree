@@ -1,0 +1,107 @@
+import java.util.Arrays;
+
+public class Assignment1 {
+    public static void main(String[] args) {
+        int n = 10000;
+        int[] originalData = new int[n];
+        for (int i = 0; i < n; i++) {
+            originalData[i] = (int)(Math.random() * 100000);
+        }
+
+        System.out.println("--- n = " + n + " ---");
+
+        int[] data1 = originalData.clone();
+        long start = System.currentTimeMillis();
+        long sum = 0;
+        for (int x : data1) sum += x;
+        long end = System.currentTimeMillis();
+        System.out.println("1. Linear Scan: " + (end - start) + " ms");
+
+        int[] data2 = originalData.clone();
+        start = System.currentTimeMillis();
+        bubbleSort(data2);
+        end = System.currentTimeMillis();
+        System.out.println("2. Bubble Sort: " + (end - start) + " ms");
+
+        int[] data3 = originalData.clone();
+        start = System.currentTimeMillis();
+        insertionSort(data3);
+        end = System.currentTimeMillis();
+        System.out.println("3. Insertion Sort: " + (end - start) + " ms");
+
+        int[] data4 = originalData.clone();
+        start = System.currentTimeMillis();
+        mergeSort(data4, 0, data4.length - 1);
+        end = System.currentTimeMillis();
+        System.out.println("4. Merge Sort: " + (end - start) + " ms");
+
+        int[] data5 = originalData.clone();
+        start = System.currentTimeMillis();
+        quickSort(data5, 0, data5.length - 1);
+        end = System.currentTimeMillis();
+        System.out.println("5. Quick Sort: " + (end - start) + " ms");
+    }
+
+    public static void bubbleSort(int[] a) {
+        for (int i = 0; i < a.length - 1; i++) {
+            for (int j = 0; j < a.length - i - 1; j++) {
+                if (a[j] > a[j + 1]) {
+                    int tmp = a[j]; a[j] = a[j + 1]; a[j + 1] = tmp;
+                }
+            }
+        }
+    }
+
+    public static void insertionSort(int[] a) {
+        for (int i = 1; i < a.length; i++) {
+            int key = a[i];
+            int j = i - 1;
+            while (j >= 0 && a[j] > key) {
+                a[j + 1] = a[j]; j--;
+            }
+            a[j + 1] = key;
+        }
+    }
+
+    public static void mergeSort(int[] a, int left, int right) {
+        if (left < right) {
+            int mid = (left + right) / 2;
+            mergeSort(a, left, mid);
+            mergeSort(a, mid + 1, right);
+            merge(a, left, mid, right);
+        }
+    }
+
+    private static void merge(int[] a, int left, int mid, int right) {
+        int[] temp = new int[right - left + 1];
+        int i = left, j = mid + 1, k = 0;
+        while (i <= mid && j <= right) {
+            if (a[i] <= a[j]) temp[k++] = a[i++];
+            else temp[k++] = a[j++];
+        }
+        while (i <= mid) temp[k++] = a[i++];
+        while (j <= right) temp[k++] = a[j++];
+        for (int p = 0; p < temp.length; p++) a[left + p] = temp[p];
+    }
+
+    public static void quickSort(int[] a, int low, int high) {
+        if (low < high) {
+            int p = partition(a, low, high);
+            quickSort(a, low, p - 1);
+            quickSort(a, p + 1, high);
+        }
+    }
+
+    private static int partition(int[] a, int low, int high) {
+        int pivot = a[high];
+        int i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (a[j] < pivot) {
+                i++;
+                int t = a[i]; a[i] = a[j]; a[j] = t;
+            }
+        }
+        int t = a[i + 1]; a[i + 1] = a[high]; a[high] = t;
+        return i + 1;
+    }
+}
