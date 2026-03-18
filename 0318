@@ -1,0 +1,86 @@
+import java.util.Scanner;
+
+public class Assignment1_DataStructures {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int demoSize = 3;
+        int[] inputs = new int[demoSize];
+
+        // 1. 輸入階段
+        System.out.println("=== Step 1: Input Data ===");
+        for (int i = 0; i < demoSize; i++) {
+            System.out.print("Enter number " + (i + 1) + ": ");
+            inputs[i] = sc.nextInt();
+        }
+
+        // 2. Stack 執行過程與計時
+        System.out.println("\n=== Step 2: Stack Execution (LIFO) ===");
+        MyStack stack = new MyStack(100005);
+        long s1 = System.currentTimeMillis();
+        for (int v : inputs) {
+            stack.push(v);
+            System.out.println("Action: Push " + v);
+        }
+        System.out.println("Action: Pop -> " + stack.pop());
+        System.out.println("Action: Pop -> " + stack.pop());
+        long e1 = System.currentTimeMillis();
+        System.out.println("Small scale execution time: " + (e1 - s1) + " ms");
+
+        // 3. Queue 執行過程與計時
+        System.out.println("\n=== Step 3: Queue Execution (FIFO) ===");
+        MyQueue queue = new MyQueue(100005);
+        long s2 = System.currentTimeMillis();
+        for (int v : inputs) {
+            queue.enqueue(v);
+            System.out.println("Action: Enqueue " + v);
+        }
+        System.out.println("Action: Dequeue -> " + queue.dequeue());
+        System.out.println("Action: Dequeue -> " + queue.dequeue());
+        long e2 = System.currentTimeMillis();
+        System.out.println("Small scale execution time: " + (e2 - s2) + " ms");
+
+        // 4. 大數據效能觀測 (Big-O Observation)
+        System.out.println("\n=== Step 4: Time Complexity Benchmarking (n=100,000) ===");
+        int testN = 100000;
+        
+        long tStart = System.currentTimeMillis();
+        for(int i=0; i<testN; i++) stack.push(i);
+        System.out.println("Stack Push " + testN + " items: " + (System.currentTimeMillis() - tStart) + " ms");
+
+        tStart = System.currentTimeMillis();
+        for(int i=0; i<testN; i++) queue.enqueue(i);
+        System.out.println("Queue Enqueue " + testN + " items: " + (System.currentTimeMillis() - tStart) + " ms");
+
+        // 5. 時間複雜度對比
+        System.out.println("\n=== Step 5: Complexity Analysis ===");
+        System.out.println("Structure | Operation | Time (Actual) | Time Complexity");
+        System.out.println("----------|-----------|---------------|-----------------");
+        System.out.println("Stack     | Push/Pop  | ~0-5 ms       | O(1)");
+        System.out.println("Queue     | Enq/Deq   | ~0-5 ms       | O(1)");
+        
+        sc.close();
+    }
+}
+
+class MyStack {
+    private int[] array;
+    private int top;
+    public MyStack(int size) { array = new int[size]; top = -1; }
+    public void push(int v) { array[++top] = v; }
+    public int pop() { return array[top--]; }
+}
+
+class MyQueue {
+    private int[] array;
+    private int front, rear, count;
+    public MyQueue(int size) { array = new int[size]; front = 0; rear = -1; count = 0; }
+    public void enqueue(int v) {
+        rear = (rear + 1) % array.length;
+        array[rear] = v; count++;
+    }
+    public int dequeue() {
+        int v = array[front];
+        front = (front + 1) % array.length;
+        count--; return v;
+    }
+}
